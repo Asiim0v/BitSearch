@@ -68,6 +68,7 @@ func openDB(path string) (*leveldb.DB, error) {
 	db, err := leveldb.OpenFile(path, o)
 	return db, err
 }
+
 func (s *LeveldbStorage) ReOpen() {
 	if !s.closed {
 		log.Println("db is not closed")
@@ -128,9 +129,10 @@ func (s *LeveldbStorage) Close() error {
 	s.closed = true
 	return nil
 }
-func (s *LeveldbStorage) isClosed() bool {
-	return s.closed
-}
+
+// func (s *LeveldbStorage) isClosed() bool {
+// 	return s.closed
+// }
 
 func (s *LeveldbStorage) compute() {
 	var count int64

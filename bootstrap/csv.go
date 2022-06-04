@@ -1,9 +1,8 @@
 package bootstrap
 
 import (
-	"BitSearch/searcher"
+	"BitSearch/global"
 	"BitSearch/searcher/model"
-	"BitSearch/searcher/words"
 	"bufio"
 	"errors"
 	"fmt"
@@ -38,16 +37,18 @@ func ReadIndex() {
 		fmt.Println("cost=", cost)
 	}()
 
+	db := global.Container.GetDataBase("db1")
+
 	// test
-	tokenizer := words.NewTokenizer("../searcher/words/data/dictionary.txt")
+	// tokenizer := words.NewTokenizer("../searcher/words/data/dictionary.txt")
 
-	var engine = &searcher.Engine{
-		IndexPath: "./test/index/db2",
-		Tokenizer: tokenizer,
-	}
-	option := engine.GetOptions()
+	// var engine = &searcher.Engine{
+	// 	IndexPath: "./test/index/db2",
+	// 	Tokenizer: tokenizer,
+	// }
+	// option := engine.GetOptions()
 
-	engine.InitOption(option)
+	// engine.InitOption(option)
 
 	// Open the file
 	csvfile, err := os.Open("data/csv/IDCONTENT.csv")
@@ -91,10 +92,10 @@ func ReadIndex() {
 			Text:     split_line[1],
 			Document: data,
 		}
-		engine.IndexDocument(&doc)
+		db.IndexDocument(&doc)
 	}
 
-	for engine.GetQueue() > 0 {
+	for db.GetQueue() > 0 {
 	}
 	fmt.Println("index finish")
 }

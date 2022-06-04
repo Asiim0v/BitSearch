@@ -5,6 +5,7 @@ import (
 	"BitSearch/searcher"
 	"BitSearch/searcher/model"
 	"BitSearch/searcher/system"
+	"log"
 	"os"
 	"runtime"
 )
@@ -24,6 +25,8 @@ func NewBase() *Base {
 
 // Query 查询
 func (b *Base) Query(request *model.SearchRequest) *model.SearchResult {
+	log.Println("query:", request)
+	log.Println("query_db:", request.Database)
 	return b.Container.GetDataBase(request.Database).MultiSearch(request)
 }
 

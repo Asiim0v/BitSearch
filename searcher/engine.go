@@ -55,7 +55,7 @@ func (e *Engine) Init() {
 		e.Option = e.GetOptions()
 	}
 	if e.Timeout == 0 {
-		e.Timeout = 10 * 3 //默认10分钟
+		e.Timeout = 10 * 60 //默认10分钟
 	}
 	//log.Println("数据存储目录：", e.IndexPath)
 
@@ -91,7 +91,7 @@ func (e *Engine) Init() {
 		e.positiveIndexStorages = append(e.positiveIndexStorages, iks)
 	}
 	go e.automaticGC()
-	//log.Println("初始化完成")
+	log.Println("初始化完成")
 }
 
 // 自动保存索引，10秒钟检测一次
@@ -325,6 +325,7 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 	e.Wait()
 	//分词搜索
 	words := e.Tokenizer.Cut(request.Query)
+	log.Println("分词结果：", words)
 
 	totalTime := float64(0)
 
@@ -440,6 +441,7 @@ func (e *Engine) processKeySearch(word string, fastSort *sorts.FastSort, wg *syn
 	defer wg.Done()
 
 	shard := e.getShardByWord(word)
+	log.Println("shard:", shard)
 	//读取id
 	invertedIndexStorage := e.invertedIndexStorages[shard]
 	key := []byte(word)
