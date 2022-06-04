@@ -3,6 +3,7 @@ module BitSearch
 go 1.18
 
 require (
+	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-gonic/gin v1.8.0
 	github.com/shirou/gopsutil/v3 v3.22.5
