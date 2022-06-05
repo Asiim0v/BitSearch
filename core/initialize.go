@@ -1,6 +1,7 @@
 package core
 
 import (
+	"BitSearch/bootstrap"
 	"BitSearch/global"
 	"BitSearch/searcher"
 	"BitSearch/searcher/words"
@@ -24,7 +25,7 @@ func NewContainer(tokenizer *words.Tokenizer) *searcher.Container {
 		Shard:     global.CONFIG.Shard,
 		Timeout:   global.CONFIG.Timeout,
 	}
-	go container.Init()
+	container.Init()
 
 	return container
 }
@@ -39,7 +40,6 @@ func Initialize() {
 	global.CONFIG = Parser()
 
 	defer func() {
-
 		if r := recover(); r != nil {
 			fmt.Printf("panic: %s\n", r)
 		}
@@ -49,10 +49,11 @@ func Initialize() {
 	tokenizer := NewTokenizer(global.CONFIG.Dictionary)
 	global.Container = NewContainer(tokenizer)
 
-	//读取csv文件建立索引
-
 	// 初始化业务逻辑
 	controller.NewServices()
+
+	//读取csv文件建立索引
+	bootstrap.ReadIndex()
 
 	// 注册路由
 	r := router.SetupRouter()
