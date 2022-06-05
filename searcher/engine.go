@@ -55,7 +55,7 @@ func (e *Engine) Init() {
 		e.Option = e.GetOptions()
 	}
 	if e.Timeout == 0 {
-		e.Timeout = 10 * 3 //默认10分钟
+		e.Timeout = 10 * 60 //默认10分钟
 	}
 	//log.Println("数据存储目录：", e.IndexPath)
 
@@ -91,7 +91,7 @@ func (e *Engine) Init() {
 		e.positiveIndexStorages = append(e.positiveIndexStorages, iks)
 	}
 	go e.automaticGC()
-	//log.Println("初始化完成")
+	log.Println("初始化完成")
 }
 
 // 自动保存索引，10秒钟检测一次
@@ -325,6 +325,7 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 	e.Wait()
 	//分词搜索
 	words := e.Tokenizer.Cut(request.Query)
+	log.Println("分词结果：", words)
 
 	totalTime := float64(0)
 
@@ -350,7 +351,6 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 	}
 	// 处理分页
 	request = request.GetAndSetDefault()
-
 	//计算交集得分和去重
 	fastSort.Process()
 
@@ -382,7 +382,6 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 
 			var resultItems = make([]model.SliceItem, 0)
 			fastSort.GetAll(&resultItems, start, end)
-
 			count := len(resultItems)
 
 			result.Documents = make([]model.ResponseDoc, count)
@@ -390,7 +389,7 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 			wg := new(sync.WaitGroup)
 			wg.Add(count)
 			for index, item := range resultItems {
-				go e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
+				e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
 			}
 			wg.Wait()
 		}

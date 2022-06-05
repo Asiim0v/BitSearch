@@ -50,7 +50,6 @@ func (s *LeveldbStorage) task() {
 
 		if !s.closed && time.Now().Unix()-s.lastTime > s.timeout {
 			s.Close()
-			//log.Println("leveldb storage timeout", s.path)
 		}
 
 		time.Sleep(time.Duration(5) * time.Second)
@@ -68,6 +67,7 @@ func openDB(path string) (*leveldb.DB, error) {
 	db, err := leveldb.OpenFile(path, o)
 	return db, err
 }
+
 func (s *LeveldbStorage) ReOpen() {
 	if !s.closed {
 		log.Println("db is not closed")
@@ -75,11 +75,11 @@ func (s *LeveldbStorage) ReOpen() {
 	}
 	db, err := openDB(s.path)
 	if err != nil {
+		log.Println(s.path, err)
 		return
 	}
 	s.db = db
 	s.closed = false
-
 	//计算总条数
 	go s.compute()
 }
@@ -128,9 +128,10 @@ func (s *LeveldbStorage) Close() error {
 	s.closed = true
 	return nil
 }
-func (s *LeveldbStorage) isClosed() bool {
-	return s.closed
-}
+
+// func (s *LeveldbStorage) isClosed() bool {
+// 	return s.closed
+// }
 
 func (s *LeveldbStorage) compute() {
 	var count int64

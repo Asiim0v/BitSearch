@@ -1,19 +1,19 @@
 package bootstrap
 
 import (
-	"BitSearch/searcher"
+	"BitSearch/global"
 	"BitSearch/searcher/model"
-	"BitSearch/searcher/words"
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/axgle/mahonia"
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
-
-	"github.com/axgle/mahonia"
 )
 
 func ConvertToString(src string, srcCode string, tagCode string) (string, error) {
@@ -38,19 +38,16 @@ func ReadIndex() {
 		fmt.Println("cost=", cost)
 	}()
 
-	// test
-	tokenizer := words.NewTokenizer("../searcher/words/data/dictionary.txt")
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+	go AddDataset("WebPage", "data/csv/IDCONTENT.csv", wg)
+	go AddDataset("Image", "data/csv/WUKONG.csv", wg)
+	wg.Wait()
+}
 
-	var engine = &searcher.Engine{
-		IndexPath: "./test/index/db2",
-		Tokenizer: tokenizer,
-	}
-	option := engine.GetOptions()
-
-	engine.InitOption(option)
-
-	// Open the file
-	csvfile, err := os.Open("data/csv/IDCONTENT.csv")
+func AddDataset(name string, filePath string, wg *sync.WaitGroup) {
+	db := global.Container.GetDataBase(name)
+	csvfile, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
 	}
@@ -61,20 +58,23 @@ func ReadIndex() {
 	index := 0
 
 	for {
-		gbk_line, err := r.ReadString('\n')
+		utf8_line, err := r.ReadString('\n')
 		if err != nil || err == io.EOF {
 			break
 		}
 
 		// Convert to UTF-8
-		utf8_line, _ := ConvertToString(gbk_line, "gbk", "utf-8")
+		// utf8_line, _ := ConvertToString(gbk_line, "gbk", "utf-8")
 		split_line := strings.Split(utf8_line, ",")
 		// sanity check, make sure not go out of bounds
-		if len(split_line) != 3 {
+		if len(split_line) < 3 {
+			log.Println("leave", len(split_line))
+			log.Println(split_line)
 			continue
 		}
 
 		temp, _ := strconv.ParseUint(split_line[0], 10, 32)
+		split_line[2] = strings.TrimRight(split_line[2], "\r\n")
 
 		if index%1000 == 0 {
 			fmt.Println(index)
@@ -91,10 +91,11 @@ func ReadIndex() {
 			Text:     split_line[1],
 			Document: data,
 		}
-		engine.IndexDocument(&doc)
+		db.IndexDocument(&doc)
 	}
 
-	for engine.GetQueue() > 0 {
+	for db.GetQueue() > 0 {
 	}
 	fmt.Println("index finish")
+	wg.Done()
 }
