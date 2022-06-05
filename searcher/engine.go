@@ -5,6 +5,7 @@ import (
 	"BitSearch/searcher/model"
 	"BitSearch/searcher/pagination"
 	"BitSearch/searcher/sorts"
+	"BitSearch/searcher/statistic"
 	"BitSearch/searcher/storage"
 	"BitSearch/searcher/utils"
 	"BitSearch/searcher/words"
@@ -38,6 +39,8 @@ type Engine struct {
 
 	Shard   int   //分片数
 	Timeout int64 //超时时间,单位秒
+
+	Recorder *statistic.Trie //搜索统计
 }
 
 type Option struct {
@@ -91,6 +94,10 @@ func (e *Engine) Init() {
 		e.positiveIndexStorages = append(e.positiveIndexStorages, iks)
 	}
 	go e.automaticGC()
+
+	//初始化字典树
+	e.Recorder = statistic.NewTrie()
+
 	log.Println("初始化完成")
 }
 
@@ -399,6 +406,11 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 	// 考虑将 words 的结果对 filterwords 求差集
 	words := difference(query, filterwords)
 	log.Println("搜索词结果：", words)
+
+	//记录在字典树中
+	for _, word := range words {
+		e.Recorder.Add(word)
+	}
 
 	totalTime := float64(0)
 
