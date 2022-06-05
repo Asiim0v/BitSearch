@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/axgle/mahonia"
@@ -38,17 +39,17 @@ func ReadIndex() {
 		fmt.Println("cost=", cost)
 	}()
 
-	// wg := &sync.WaitGroup{}
-	// wg.Add(2)
-	// go AddDataset("WebPage", "data/csv/IDCONTENT.csv", wg)
-	// go AddDataset("Image", "data/csv/WUKONG.csv", wg)
-	// wg.Wait()
-	AddDatasetWeb("WebPage", "data/csv/IDCONTENT.csv")
-	AddDataset("Image", "data/csv/WUKONG.csv")
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+	go AddDataset("WebPage", "data/csv/IDCONTENT.csv", wg)
+	go AddDataset("Image", "data/csv/WUKONG.csv", wg)
+	wg.Wait()
+	// AddDatasetWeb("WebPage", "data/csv/IDCONTENT.csv")
+	// AddDataset("Image", "data/csv/WUKONG.csv")
 }
 
-func AddDataset(name string, filePath string) {
-	//defer wg.Done()
+func AddDataset(name string, filePath string, wg *sync.WaitGroup) {
+	defer wg.Done()
 
 	db := global.Container.GetDataBase(name)
 	csvfile, err := os.Open(filePath)
@@ -105,8 +106,8 @@ func AddDataset(name string, filePath string) {
 	fmt.Println("index finish")
 }
 
-func AddDatasetWeb(name string, filePath string) {
-	//defer wg.Done()
+func AddDatasetWeb(name string, filePath string, wg *sync.WaitGroup) {
+	defer wg.Done()
 
 	db := global.Container.GetDataBase(name)
 	csvfile, err := os.Open(filePath)
