@@ -41,7 +41,7 @@ func ReadIndex() {
 
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
-	go AddDataset("WebPage", "data/csv/IDCONTENT.csv", wg)
+	go AddDatasetWeb("WebPage", "data/csv/IDCONTENT.csv", wg)
 	go AddDataset("Image", "data/csv/WUKONG.csv", wg)
 	wg.Wait()
 	// AddDatasetWeb("WebPage", "data/csv/IDCONTENT.csv")
@@ -69,9 +69,9 @@ func AddDataset(name string, filePath string, wg *sync.WaitGroup) {
 		}
 
 		// Convert to UTF-8
-		if name == "WebPage" {
-			utf8_line, _ = ConvertToString(utf8_line, "gbk", "utf-8")
-		}
+		// if name == "WebPage" {
+		// 	utf8_line, _ = ConvertToString(utf8_line, "gbk", "utf-8")
+		// }
 		split_line := strings.Split(utf8_line, ",")
 		// sanity check, make sure not go out of bounds
 		if len(split_line) < 3 {
