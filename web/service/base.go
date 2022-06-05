@@ -57,3 +57,14 @@ func (b *Base) Restart() {
 	// TODD 未实现
 	os.Exit(0)
 }
+
+func (b *Base) SearchReminder(database string, query string) []string {
+	limit := global.CONFIG.ReminderNum
+	data, _ := b.Container.GetDataBase(database).Recorder.PrefixSearch(query, limit)
+	return data
+}
+
+func (b *Base) SearchTrends(database string) []string {
+	limit := global.CONFIG.TrendNum
+	return b.Container.GetDataBase(database).Recorder.GetSearchTrending(limit)
+}

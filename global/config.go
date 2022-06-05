@@ -12,4 +12,6 @@ type Config struct {
 	Auth        string `json:"auth"`        //认证
 	EnableGzip  bool   `yaml:"enableGzip"`  //是否开启gzip压缩
 	Timeout     int64  `json:"timeout"`     //超时时间
+	ReminderNum int    `json:"reminderNum"` //默认的提醒数
+	TrendNum    int    `json:"trendNum"`    //默认热词数
 }

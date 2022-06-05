@@ -2,7 +2,6 @@ package controller
 
 import (
 	"BitSearch/searcher/model"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,5 +32,23 @@ func GC(c *gin.Context) {
 // Status 获取服务器状态
 func Status(c *gin.Context) {
 	r := srv.Base.Status()
+	ResponseSuccessWithData(c, r)
+}
+
+// SearchReminder 搜索提示
+func SearchReminder(c *gin.Context) {
+	database := c.Query("database")
+	query := c.Query("query")
+	r := srv.Base.SearchReminder(database, query)
+	ResponseSuccessWithData(c, r)
+}
+
+// SearchTrends 获取搜索热度
+func SearchTrends(c *gin.Context) {
+	database := c.Query("database")
+	if database == "" {
+		ResponseErrorWithMsg(c, "Need Database")
+	}
+	r := srv.Base.SearchTrends(database)
 	ResponseSuccessWithData(c, r)
 }

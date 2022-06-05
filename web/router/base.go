@@ -15,6 +15,7 @@ func InitBaseRouter(Router *gin.RouterGroup) {
 		BaseRouter.POST("query", controller.Query)
 		BaseRouter.GET("status", controller.Status)
 		BaseRouter.GET("gc", controller.GC)
-
+		BaseRouter.POST("reminder", controller.SearchReminder)
+		BaseRouter.POST("trend", controller.SearchTrends)
 	}
 }

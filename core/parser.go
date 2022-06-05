@@ -35,6 +35,10 @@ func Parser() *global.Config {
 
 	var configPath = flag.String("config", "", "配置文件路径，配置此项其他参数忽略")
 
+	var reminderNum = flag.Int("reminderNum", 5, "默认的输入提示数量")
+
+	var trendNum = flag.Int("trendNum", 10, "默认的热词数量")
+
 	flag.Parse()
 
 	config := &global.Config{}
@@ -61,6 +65,8 @@ func Parser() *global.Config {
 		Auth:        *auth,
 		EnableGzip:  *enableGzip,
 		Timeout:     *timeout,
+		ReminderNum: *reminderNum,
+		TrendNum:    *trendNum,
 	}
 
 	return config
