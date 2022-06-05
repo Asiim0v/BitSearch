@@ -64,6 +64,7 @@ func openDB(path string) (*leveldb.DB, error) {
 		Filter: filter.NewBloomFilter(10),
 	}
 
+	log.Println("open db", path)
 	db, err := leveldb.OpenFile(path, o)
 	return db, err
 }
