@@ -50,7 +50,6 @@ func (s *LeveldbStorage) task() {
 
 		if !s.closed && time.Now().Unix()-s.lastTime > s.timeout {
 			s.Close()
-			//log.Println("leveldb storage timeout", s.path)
 		}
 
 		time.Sleep(time.Duration(5) * time.Second)
@@ -77,6 +76,7 @@ func (s *LeveldbStorage) ReOpen() {
 	}
 	db, err := openDB(s.path)
 	if err != nil {
+		log.Println(s.path, err)
 		return
 	}
 	s.db = db

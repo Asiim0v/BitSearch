@@ -40,7 +40,6 @@ func Initialize() {
 	global.CONFIG = Parser()
 
 	defer func() {
-
 		if r := recover(); r != nil {
 			fmt.Printf("panic: %s\n", r)
 		}
