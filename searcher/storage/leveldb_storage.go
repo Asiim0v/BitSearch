@@ -81,7 +81,6 @@ func (s *LeveldbStorage) ReOpen() {
 	}
 	s.db = db
 	s.closed = false
-
 	//计算总条数
 	go s.compute()
 }

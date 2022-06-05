@@ -50,11 +50,11 @@ func Initialize() {
 	tokenizer := NewTokenizer(global.CONFIG.Dictionary)
 	global.Container = NewContainer(tokenizer)
 
-	//读取csv文件建立索引
-	bootstrap.ReadIndex()
-
 	// 初始化业务逻辑
 	controller.NewServices()
+
+	//读取csv文件建立索引
+	bootstrap.ReadIndex()
 
 	// 注册路由
 	r := router.SetupRouter()

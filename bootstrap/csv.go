@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -38,57 +38,49 @@ func ReadIndex() {
 		fmt.Println("cost=", cost)
 	}()
 
-	db := global.Container.GetDataBase("db1")
+	// wg := &sync.WaitGroup{}
+	// wg.Add(2)
+	// go AddDataset("WebPage", "data/csv/IDCONTENT.csv", wg)
+	// go AddDataset("Image", "data/csv/WUKONG.csv", wg)
+	// wg.Wait()
+	AddDatasetWeb("WebPage", "data/csv/IDCONTENT.csv")
+	AddDataset("Image", "data/csv/WUKONG.csv")
+}
 
-	// test
-	// tokenizer := words.NewTokenizer("../searcher/words/data/dictionary.txt")
+func AddDataset(name string, filePath string) {
+	//defer wg.Done()
 
-	// var engine = &searcher.Engine{
-	// 	IndexPath: "./test/index/db2",
-	// 	Tokenizer: tokenizer,
-	// }
-	// option := engine.GetOptions()
-
-	// engine.InitOption(option)
-
-	// Open the file
-	csvfile, err := os.Open("data/csv/IDCONTENT.csv")
+	db := global.Container.GetDataBase(name)
+	csvfile, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
 	}
 	defer csvfile.Close()
-
-	// get the current system
-	sysType := runtime.GOOS
 
 	// Read File
 	r := bufio.NewReader(csvfile)
 	index := 0
 
 	for {
-		gbk_line, err := r.ReadString('\n')
+		utf8_line, err := r.ReadString('\n')
 		if err != nil || err == io.EOF {
 			break
 		}
 
 		// Convert to UTF-8
-		utf8_line, _ := ConvertToString(gbk_line, "gbk", "utf-8")
+		if name == "WebPage" {
+			utf8_line, _ = ConvertToString(utf8_line, "gbk", "utf-8")
+		}
 		split_line := strings.Split(utf8_line, ",")
-		//log.Println(split_line)
-
 		// sanity check, make sure not go out of bounds
-		if len(split_line) != 3 {
+		if len(split_line) < 3 {
+			log.Println("leave", len(split_line))
+			log.Println(split_line)
 			continue
 		}
 
-		// get the id and url
 		temp, _ := strconv.ParseUint(split_line[0], 10, 32)
-		if sysType == "windows" {
-			split_line[2] = strings.TrimRight(split_line[2], "\r\n")
-		} else if sysType == "linux" {
-			split_line[2] = strings.TrimRight(split_line[2], "\n")
-		}
-		//log.Println(split_line)
+		split_line[2] = strings.TrimRight(split_line[2], "\r\n")
 
 		if index%1000 == 0 {
 			fmt.Println(index)
@@ -105,8 +97,62 @@ func ReadIndex() {
 			Text:     split_line[1],
 			Document: data,
 		}
-		//log.Println(doc)
+		db.IndexDocument(&doc)
+	}
 
+	for db.GetQueue() > 0 {
+	}
+	fmt.Println("index finish")
+}
+
+func AddDatasetWeb(name string, filePath string) {
+	//defer wg.Done()
+
+	db := global.Container.GetDataBase(name)
+	csvfile, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer csvfile.Close()
+
+	// Read File
+	r := bufio.NewReader(csvfile)
+	index := 0
+
+	for {
+		utf8_line, err := r.ReadString('\n')
+		if err != nil || err == io.EOF {
+			break
+		}
+
+		// Convert to UTF-8
+		utf8_line, _ = ConvertToString(utf8_line, "gbk", "utf-8")
+		split_line := strings.Split(utf8_line, ",")
+		// sanity check, make sure not go out of bounds
+		if len(split_line) < 3 {
+			log.Println("leave", len(split_line))
+			log.Println(split_line)
+			continue
+		}
+
+		temp, _ := strconv.ParseUint(split_line[0], 10, 32)
+		split_line[2] = strings.TrimRight(split_line[2], "\r\n")
+
+		if index%1000 == 0 {
+			fmt.Println(index)
+		}
+		index++
+
+		data := make(map[string]interface{})
+		data["URL"] = split_line[2]
+		data["cid"] = uint32(temp)
+		data["title"] = split_line[1]
+
+		doc := model.IndexDoc{
+			Id:       uint32(temp),
+			Text:     split_line[1],
+			Document: data,
+		}
 		db.IndexDocument(&doc)
 	}
 

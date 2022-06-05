@@ -414,7 +414,8 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 		wg.Add(base)
 
 		for _, word := range words {
-			go e.processKeySearch(word, fastSort, wg, base)
+			//go e.processKeySearch(word, fastSort, wg, base)
+			e.processKeySearch(word, fastSort, wg, base)
 		}
 		wg.Wait()
 	})
