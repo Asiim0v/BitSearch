@@ -27,6 +27,7 @@ func NewBase() *Base {
 func (b *Base) Query(request *model.SearchRequest) *model.SearchResult {
 	log.Println("query:", request)
 	log.Println("query_db:", request.Database)
+	log.Println("filterwords:", request.Filterwords)
 	return b.Container.GetDataBase(request.Database).MultiSearch(request)
 }
 

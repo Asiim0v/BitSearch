@@ -319,13 +319,86 @@ func (e *Engine) addPositiveIndex(index *model.IndexDoc, keys []string) {
 	positiveIndexStorage.Set(key, utils.Encoder(keys))
 }
 
+//求并集
+func union(slice1, slice2 []string) []string {
+	if len(slice1) == 0 {
+		return slice2
+	}
+
+	m := make(map[string]int)
+	for _, v := range slice1 {
+		m[v]++
+	}
+
+	for _, v := range slice2 {
+		if m[v] == 0 {
+			slice1 = append(slice1, v)
+		}
+	}
+	return slice1
+}
+
+// 求交集
+func intersect(slice1, slice2 []string) []string {
+	if len(slice2) == 0 {
+		return slice1
+	}
+
+	m := make(map[string]int)
+	n := make([]string, 0)
+	for _, v := range slice1 {
+		m[v]++
+	}
+
+	for _, v := range slice2 {
+		if m[v] == 1 {
+			n = append(n, v)
+		}
+	}
+	return n
+}
+
+// 求差集, 此处只统计 s1 对 s2 的差集
+func difference(slice1, slice2 []string) []string {
+	if len(slice2) == 0 {
+		return slice1
+	}
+
+	m := make(map[string]int)
+	n := make([]string, 0)
+	inter := intersect(slice1, slice2)
+	for _, v := range inter {
+		m[v]++
+	}
+
+	for _, value := range slice1 {
+		if m[value] == 0 {
+			n = append(n, value)
+		}
+	}
+	return n
+}
+
 // MultiSearch 多线程搜索
 func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 	//等待搜索初始化完成
 	e.Wait()
 	//分词搜索
-	words := e.Tokenizer.Cut(request.Query)
-	log.Println("分词结果：", words)
+	query := e.Tokenizer.Cut(request.Query)
+	log.Println("分词结果：", query)
+
+	// 对传入的 Filterwords 逐个分词后求并集作为最终的过滤词
+	filterwords := make([]string, 0)
+	for _, fwords := range request.Filterwords {
+		fwslice := e.Tokenizer.Cut(fwords)
+		filterwords = union(filterwords, fwslice)
+	}
+	log.Println("过滤词结果：", filterwords)
+
+	// 将 words 的分词结果经过 filterwords 的过滤，得到最终的搜索词
+	// 考虑将 words 的结果对 filterwords 求差集
+	words := difference(query, filterwords)
+	log.Println("搜索词结果：", words)
 
 	totalTime := float64(0)
 
