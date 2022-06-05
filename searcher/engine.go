@@ -391,7 +391,8 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 			wg := new(sync.WaitGroup)
 			wg.Add(count)
 			for index, item := range resultItems {
-				go e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
+				//go e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
+				e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
 			}
 			wg.Wait()
 		}

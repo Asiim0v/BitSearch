@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -57,6 +58,9 @@ func ReadIndex() {
 	}
 	defer csvfile.Close()
 
+	// get the current system
+	sysType := runtime.GOOS
+
 	// Read File
 	r := bufio.NewReader(csvfile)
 	index := 0
@@ -70,12 +74,21 @@ func ReadIndex() {
 		// Convert to UTF-8
 		utf8_line, _ := ConvertToString(gbk_line, "gbk", "utf-8")
 		split_line := strings.Split(utf8_line, ",")
+		//log.Println(split_line)
+
 		// sanity check, make sure not go out of bounds
 		if len(split_line) != 3 {
 			continue
 		}
 
+		// get the id and url
 		temp, _ := strconv.ParseUint(split_line[0], 10, 32)
+		if sysType == "windows" {
+			split_line[2] = strings.TrimRight(split_line[2], "\r\n")
+		} else if sysType == "linux" {
+			split_line[2] = strings.TrimRight(split_line[2], "\n")
+		}
+		//log.Println(split_line)
 
 		if index%1000 == 0 {
 			fmt.Println(index)
@@ -92,6 +105,8 @@ func ReadIndex() {
 			Text:     split_line[1],
 			Document: data,
 		}
+		//log.Println(doc)
+
 		db.IndexDocument(&doc)
 	}
 
