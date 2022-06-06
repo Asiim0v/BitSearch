@@ -6,7 +6,7 @@ import (
 	"embed"
 )
 
-//go:embed data/*.txt
+//go:embed data/dict.txt
 var dictionaryFS embed.FS
 
 func main() {
