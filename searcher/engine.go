@@ -492,7 +492,6 @@ func (e *Engine) getDocument(item model.SliceItem, doc *model.ResponseDoc, reque
 	buf := e.GetDocById(item.Id)
 	defer wg.Done()
 	doc.Score = item.Score
-
 	if buf != nil {
 		//gob解析
 		storageDoc := new(model.StorageIndexDoc)

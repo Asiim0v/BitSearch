@@ -2,6 +2,7 @@ package controller
 
 import (
 	"BitSearch/searcher/model"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -50,5 +51,11 @@ func SearchTrends(c *gin.Context) {
 		ResponseErrorWithMsg(c, "Need Database")
 	}
 	r := srv.Base.SearchTrends(database)
+	ResponseSuccessWithData(c, r)
+}
+
+func GetPageDetail(c *gin.Context) {
+	url := c.Query("url")
+	r := srv.Base.GetDetail(url)
 	ResponseSuccessWithData(c, r)
 }

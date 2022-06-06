@@ -3,16 +3,20 @@ module BitSearch
 go 1.18
 
 require (
+	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-gonic/gin v1.8.0
 	github.com/shirou/gopsutil/v3 v3.22.5
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/wangbin/jiebago v0.3.2
+	golang.org/x/net v0.0.0-20220531201128-c960675eff93
+	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
+	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -33,8 +37,6 @@ require (
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
-	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 )
