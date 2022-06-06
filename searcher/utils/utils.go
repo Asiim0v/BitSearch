@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	"compress/flate"
 	"encoding/binary"
@@ -14,6 +15,10 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"golang.org/x/net/html/charset"
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/unicode"
 )
 
 func ExecTime(fn func()) float64 {
@@ -341,4 +346,28 @@ func GetLongWords(words *[]string) []string {
 		}
 	}
 	return newWords
+}
+
+// func DecodeEncoding(r io.Reader) *transform.Reader {
+// 	e := determineEncodeing(r)
+// 	return transform.NewReader(r, e.NewDecoder())
+// }
+
+// 判断传输来的文本的字符集格式是什么
+// func DetermineEncodeing(r io.Reader) encoding.Encoding {
+// 	peek, err := bufio.NewReader(r).Peek(1024)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	determineEncoding, _, _ := charset.DetermineEncoding(peek, "")
+// 	return determineEncoding
+// }
+func DeterminEncoding(r *bufio.Reader) encoding.Encoding {
+	bytes, err := r.Peek(1024) //读取
+	if err != nil {
+		log.Printf("fetch error:%v", err)
+		return unicode.UTF8
+	}
+	e, _, _ := charset.DetermineEncoding(bytes, "") //判断编码方式
+	return e
 }

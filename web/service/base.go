@@ -5,9 +5,17 @@ import (
 	"BitSearch/searcher"
 	"BitSearch/searcher/model"
 	"BitSearch/searcher/system"
+	"bytes"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"runtime"
+	"strings"
+	"unicode/utf8"
+
+	"github.com/PuerkitoBio/goquery"
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 // Base 基础管理
@@ -67,4 +75,26 @@ func (b *Base) SearchReminder(database string, query string) []string {
 func (b *Base) SearchTrends(database string) []model.TrendResult {
 	limit := global.CONFIG.TrendNum
 	return b.Container.GetDataBase(database).Recorder.GetSearchTrending(limit)
+}
+
+func (b *Base) GetDetail(url string) (ret []string) {
+	resp, _ := http.Get(url)
+
+	data, _ := ioutil.ReadAll(resp.Body)
+	if !utf8.Valid(data) {
+		data, _ = simplifiedchinese.GBK.NewDecoder().Bytes(data)
+	}
+
+	doc, _ := goquery.NewDocumentFromReader(bytes.NewReader(data))
+
+	title := doc.Find("title").Text()
+	content := doc.Find("div").Text()
+	content = strings.Replace(content, "\n", "", -1)
+	content = strings.Replace(content, "\t", "", -1)
+	content = strings.Replace(content, " ", "", -1)
+
+	ret = append(ret, title)
+	ret = append(ret, content[:80])
+
+	return
 }
