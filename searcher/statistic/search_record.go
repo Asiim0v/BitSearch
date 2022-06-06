@@ -1,6 +1,7 @@
 package statistic
 
 import (
+	"BitSearch/searcher/model"
 	"container/heap"
 	"sort"
 )
@@ -138,7 +139,7 @@ func (t *Trie) PrefixSearch(key string, limit int) (data []string, sum []int) {
 }
 
 // GetSearchTrending 获取搜索热度最高的几个关键词
-func (t *Trie) GetSearchTrending(limit int) []string {
+func (t *Trie) GetSearchTrending(limit int) []model.TrendResult {
 	nodes := t.prefixSearch("", 100)
 	sort.Slice(nodes, func(i, j int) bool {
 		return nodes[i].Count.(int) > nodes[j].Count.(int) //按照每行的第一个元素排序
@@ -147,9 +148,10 @@ func (t *Trie) GetSearchTrending(limit int) []string {
 	if limit > len(nodes) {
 		limit = len(nodes)
 	}
-	hotSearch := make([]string, limit)
+	hotSearch := make([]model.TrendResult, limit)
 	for i := 0; i < limit; i++ {
-		hotSearch[i] = nodes[i].Data.(string)
+		hotSearch[i].Word = nodes[i].Data.(string)
+		hotSearch[i].Heat = nodes[i].Count.(int)
 	}
 	return hotSearch
 }

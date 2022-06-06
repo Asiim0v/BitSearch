@@ -1,6 +1,7 @@
 package searcher
 
 import (
+	"BitSearch/searcher/statistic"
 	"BitSearch/searcher/words"
 	"fmt"
 	"io/ioutil"
@@ -17,6 +18,7 @@ type Container struct {
 	Tokenizer *words.Tokenizer   //分词器
 	Shard     int                //分片
 	Timeout   int64              //超时关闭数据库
+	Recorder  *statistic.Trie
 }
 
 func (c *Container) Init() error {
@@ -36,6 +38,8 @@ func (c *Container) Init() error {
 			return err
 		}
 	}
+	//初始化字典树
+	c.Recorder = statistic.NewTrie()
 	//初始化数据库
 	for _, dir := range dirs {
 		if dir.IsDir() {
@@ -55,6 +59,7 @@ func (c *Container) NewEngine(name string) *Engine {
 		Tokenizer:    c.Tokenizer,
 		Shard:        c.Shard,
 		Timeout:      c.Timeout,
+		Recorder:     c.Recorder,
 	}
 	option := engine.GetOptions()
 

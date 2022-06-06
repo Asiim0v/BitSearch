@@ -43,3 +43,8 @@ type SearchResult struct {
 	Documents []ResponseDoc `json:"documents,omitempty"` //文档
 	Words     []string      `json:"words,omitempty"`     //搜索关键词
 }
+
+type TrendResult struct {
+	Heat int
+	Word string
+}

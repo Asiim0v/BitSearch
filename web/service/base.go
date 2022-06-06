@@ -64,7 +64,7 @@ func (b *Base) SearchReminder(database string, query string) []string {
 	return data
 }
 
-func (b *Base) SearchTrends(database string) []string {
+func (b *Base) SearchTrends(database string) []model.TrendResult {
 	limit := global.CONFIG.TrendNum
 	return b.Container.GetDataBase(database).Recorder.GetSearchTrending(limit)
 }

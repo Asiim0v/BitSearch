@@ -95,9 +95,6 @@ func (e *Engine) Init() {
 	}
 	go e.automaticGC()
 
-	//初始化字典树
-	e.Recorder = statistic.NewTrie()
-
 	log.Println("初始化完成")
 }
 
