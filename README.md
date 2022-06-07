@@ -56,7 +56,7 @@
 
     **响应**
 
-    ```json
+    ```
     {
         "state": true,
         "message": "success",
@@ -135,7 +135,7 @@
 
     **响应**
 
-    ```json
+    ```
     {
         "state": true,
         "message": "success",
@@ -180,7 +180,7 @@
                         "柯南"
                     ]
                 },
-    			...
+                ...
         }
     }
     ```
@@ -202,14 +202,14 @@
 ```shell
 ├── BitSearch.exe
 ├── README.md
-├── bootstrap				#引导文件, 负责爬虫文件读取等功能
+├── bootstrap                   #引导文件, 负责爬虫文件读取等功能
 │   ├── csv.go
 │   └── template.go
-├── config.yaml				#项目配置信息
-├── core					#负责初始化及配置信息的解析
+├── config.yaml                 #项目配置信息
+├── core                        #负责初始化及配置信息的解析
 │   ├── initialize.go
 │   └── parser.go
-├── data					#爬虫源数据及分词词典存放目录
+├── data                        #爬虫源数据及分词词典存放目录
 │   ├── csv
 │   │   ├── IDCONTENT.csv
 │   │   ├── IDURL.csv
@@ -217,38 +217,38 @@
 │   ├── dict.txt
 │   ├── dictionary.txt
 │   └── stopwords.txt
-├── database				#leveldb数据库文件存放目录
+├── database                    #leveldb数据库文件存放目录
 │   ├── Image
 │   └── WebPage
-├── global					#服务器设置
+├── global                      #服务器设置
 │   ├── config.go
 │   └── global.go
 ├── go.mod
 ├── go.sum
 ├── main.go
-├── searcher				#搜索引擎相关
+├── searcher                    #搜索引擎相关
 │   ├── arrays
 │   │   └── arrays.go
 │   ├── container.go
 │   ├── engine.go
 │   ├── model
-│   │   ├── doc.go			#索引结构相关
+│   │   ├── doc.go              #索引结构相关
 │   │   ├── item.go
 │   │   └── search.go
-│   ├── pagination			#分页相关
+│   ├── pagination              #分页相关
 │   │   └── pagination.go
 │   ├── sorts
 │   │   └── fast.go
-│   ├── statistic			#搜索历史，热词相关
+│   ├── statistic               #搜索历史，热词相关
 │   │   └── search_record.go
 │   ├── storage
 │   │   └── leveldb_storage.go
-│   ├── system				#获取系统信息
+│   ├── system                  #获取系统信息
 │   │   ├── cpu.go
 │   │   ├── disk.go
 │   │   ├── mem.go
 │   │   └── utils.go
-│   ├── utils				#通用的编解码, 哈希算法相关
+│   ├── utils                   #通用的编解码, 哈希算法相关
 │   │   └── utils.go
 │   └── words
 │       ├── data
@@ -257,7 +257,7 @@
 │       │   └── stopwords.txt
 │       └── tokenizer.go
 └── web
-    ├── controller			#路由的Handler相关
+    ├── controller              #路由的Handler相关
     │   ├── base.go
     │   ├── database.go
     │   ├── index.go
@@ -268,13 +268,13 @@
     │   ├── cors.go
     │   └── exception.go
     ├── result.go
-    ├── router				#注册路由相关
+    ├── router                  #注册路由相关
     │   ├── base.go
     │   ├── database.go
     │   ├── index.go
     │   ├── router.go
     │   └── word.go
-    └── service				#Handler的底层实现
+    └── service                 #Handler的底层实现
         ├── base.go
         ├── database.go
         ├── index.go
