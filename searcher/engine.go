@@ -325,10 +325,6 @@ func (e *Engine) addPositiveIndex(index *model.IndexDoc, keys []string) {
 
 //求并集
 func union(slice1, slice2 []string) []string {
-	if len(slice1) == 0 {
-		return slice2
-	}
-
 	m := make(map[string]int)
 	for _, v := range slice1 {
 		m[v]++
@@ -344,10 +340,6 @@ func union(slice1, slice2 []string) []string {
 
 // 求交集
 func intersect(slice1, slice2 []string) []string {
-	if len(slice2) == 0 {
-		return slice1
-	}
-
 	m := make(map[string]int)
 	n := make([]string, 0)
 	for _, v := range slice1 {
@@ -381,6 +373,21 @@ func difference(slice1, slice2 []string) []string {
 		}
 	}
 	return n
+}
+
+// checkfilter 检查 SliceItems.Id 映射的网页结果是否包含过滤词, true 表示不包含
+func (e *Engine) checkfilter(item model.SliceItem, filter []string) bool {
+	buf := e.GetDocById(item.Id)
+	if buf != nil {
+		//gob解析
+		storageDoc := new(model.StorageIndexDoc)
+		utils.Decoder(buf, &storageDoc)
+		//检查是否包含过滤词, 即 storageDoc.Keys 和 filter 交集是否为空
+		if len(intersect(storageDoc.Keys, filter)) == 0 {
+			return true
+		}
+	}
+	return false
 }
 
 // MultiSearch 多线程搜索
@@ -438,6 +445,16 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 	//计算交集得分和去重
 	fastSort.Process()
 
+	//将去重排序后的搜索结果通过 filterwords 做二次过滤
+	SliceItems := fastSort.GetData()
+	FilterItems := make([]model.SliceItem, 0)
+	for _, sliceitem := range SliceItems {
+		if e.checkfilter(sliceitem, filterwords) {
+			FilterItems = append(FilterItems, sliceitem)
+		}
+	}
+	fastSort.SetFilters(FilterItems)
+
 	wordMap := make(map[string]bool)
 	for _, word := range words {
 		wordMap[word] = true
@@ -445,7 +462,8 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 
 	//读取文档
 	var result = &model.SearchResult{
-		Total: fastSort.Count(),
+		// Total: fastSort.Count(),
+		Total: len(FilterItems),
 		Page:  request.Page,
 		Limit: request.Limit,
 		Words: words,
@@ -455,7 +473,8 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 
 		pager := new(pagination.Pagination)
 
-		pager.Init(request.Limit, fastSort.Count())
+		// pager.Init(request.Limit, fastSort.Count())
+		pager.Init(request.Limit, len(FilterItems))
 		//设置总页数
 		result.PageCount = pager.PageCount
 

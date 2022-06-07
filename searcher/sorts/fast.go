@@ -49,6 +49,8 @@ type FastSort struct {
 
 	data []model.SliceItem
 
+	filters []model.SliceItem
+
 	temps []uint32
 
 	count int //总数
@@ -135,7 +137,16 @@ func (f *FastSort) Process() {
 	//对分数进行排序
 	sort.Sort(sort.Reverse(ScoreSlice(f.data)))
 }
-func (f *FastSort) GetAll(result *[]model.SliceItem, start int, end int) {
 
-	*result = f.data[start:end]
+func (f *FastSort) GetAll(result *[]model.SliceItem, start int, end int) {
+	// *result = f.data[start:end]
+	*result = f.filters[start:end]
+}
+
+func (f *FastSort) GetData() []model.SliceItem {
+	return f.data
+}
+
+func (f *FastSort) SetFilters(filters []model.SliceItem) {
+	f.filters = filters
 }
