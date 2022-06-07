@@ -1,25 +1,23 @@
-## BitSearch
+# BitSearch
 
-`BitSearch`搜索引擎的后端部分，前端部分见https://github.com/yccye/BitSearch_FrontEnd
+该项目是`BitSearch`搜索引擎的后端部分，前端部分见https://github.com/yccye/BitSearch_FrontEnd
 
 后端部分参考了项目[GoFound](https://github.com/newpanjing/gofound)
 
 `BitSerach`是一个Golang实现的全文检索引擎，支持纯文本信息的搜索、输入文本搜索图片、自定义关键词过滤等功能
 
-`BitSearch`项目文档：[飞书文档](https://tolq2riwyn.feishu.cn/docs/doccnUnXaeTyT9pNoO3Q42YQiHb)
-
 ### 项目技术栈
 
 -   爬虫部分：[Jiebago](https://github.com/wangbin/jiebago)（中文分词）+ [stopwords](https://github.com/goto456/stopwords)（停用词表过滤）
 
--   前端部分：[React](https://github.com/facebook/react)（框架） + [Ant Design](https://github.com/ant-design/ant-design)（UI） + [d3](https://github.com/d3/d3)（知识图谱）
+-   前端部分：[React](https://github.com/facebook/react)（框架） + [Ant Design](https://github.com/ant-design/ant-design)（UI）
 -   后端部分：[Gin](https://github.com/gin-gonic/gin)（框架）+ [LevelDB](https://github.com/syndtr/goleveldb)（持久化）
 
 ### 安装和启动
 
 >   注：克隆项目代码到本地后，将searcher/words/data文件夹复制到项目根目录
 
--   下载爬虫数据集csv文件夹，放到项目根目录的data文件夹下
+-   下载数据集csv文件夹，放到项目根目录的data文件夹下，也可以按照对应的格式自定义数据集放在文件中
 
     数据集：链接：https://pan.baidu.com/s/1jIGU6ZkMSmVCSxz5AInTzw  提取码：56p7 
 
@@ -33,7 +31,7 @@
 
 ### 项目主要功能点
 
->   对于搜索网页及搜索图片，本项目采用了两个数据库（WebPage和Image）来分别存储，在接口地址中通过指定数据库名执行对应内容的搜索
+>   对于搜索网页及搜索图片，本项目采用了两个数据库（WebPage和Image）来分别存储图像搜索和网页搜索的数据，在接口地址中通过指定数据库名执行对应内容的搜索
 
 1.  文字搜索网页(采用自行爬取的数据)
 
@@ -189,17 +187,98 @@
 
 3.  搜索提醒
 
-4.  搜索历史
+    **请求**
 
-5.  搜索热词
+    | 接口地址 | http://127.0.0.1:5678/api/reminder |
+    | -------- | ---------------------------------- |
+    | 请求方式 | POST                               |
+    | 请求类型 | application/json                   |
 
-6.  搜索分页
+    ````
+    {
+      "query": "上"
+    }
+    ````
 
-7.  过滤搜索
+    **响应**
+
+    ```
+    {
+        "state": true,
+        "message": "success",
+        "data": [
+        	"上海",
+        	"上海滩",
+        	"上海交通大学"
+        ]
+    }
+    ```
+
+4.  搜索热词
+
+    **请求**
+
+    | 接口地址 | http://127.0.0.1:5678/api/trend |
+    | -------- | ------------------------------- |
+    | 请求方式 | GET                             |
+    | 请求类型 | application/json                |
+
+    **响应**
+
+    ```
+    {
+        "state": true,
+        "message": "success",
+        "data": [
+            {
+                "Heat": 6,
+                "Word": "上海"
+            },
+            {
+                "Heat": 1,
+                "Word": "交通"
+            },
+            {
+                "Heat": 1,
+                "Word": "跳动"
+            },
+            {
+                "Heat": 1,
+                "Word": "字节"
+            },
+            {
+                "Heat": 1,
+                "Word": "海滩"
+            },
+            {
+                "Heat": 1,
+                "Word": "大学"
+            },
+            {
+                "Heat": 1,
+                "Word": "上海滩"
+            },
+            {
+                "Heat": 1,
+                "Word": "上海交通大学"
+            }
+        ]
+    }
+    ```
+
+5.  搜索分页
+
+    搜索分页由搜索请求中的page参数来决定页数，这里不重复说明
+
+6.  过滤搜索
+
+    过滤由搜索请求中的filterwords参数来决定页数，这里不重复说明
 
 ### 项目结构
 
--   项目的具体流程图可参考（待补充）
+-   项目的具体流程图可参考下图 完整文件见 https://www.processon.com/view/link/629f30f16376890758527652
+
+    ![](./image/BitSearch.png)
 
 ```shell
 ├── BitSearch.exe
@@ -285,14 +364,4 @@
 ```
 
 ### 项目演示
-
--   项目的主要界面如下所示：（待补充）
-
-
-
-
-
-
-
-
-
+https://www.bilibili.com/video/BV1k94y1m7Yo?spm_id_from=333.999.0.0
