@@ -6,6 +6,8 @@
 
 `BitSerach`是一个Golang实现的全文检索引擎，支持纯文本信息的搜索、输入文本搜索图片、自定义关键词过滤等功能
 
+`BitSearch`项目文档：[飞书文档](https://tolq2riwyn.feishu.cn/docs/doccnUnXaeTyT9pNoO3Q42YQiHb)
+
 ### 项目技术栈
 
 -   爬虫部分：[Jiebago](https://github.com/wangbin/jiebago)（中文分词）+ [stopwords](https://github.com/goto456/stopwords)（停用词表过滤）
