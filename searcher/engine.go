@@ -93,7 +93,7 @@ func (e *Engine) Init() {
 		}
 		e.positiveIndexStorages = append(e.positiveIndexStorages, iks)
 	}
-	go e.automaticGC()
+	//go e.automaticGC()
 
 	log.Println("初始化完成")
 }
@@ -430,8 +430,8 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 		wg.Add(base)
 
 		for _, word := range words {
-			//go e.processKeySearch(word, fastSort, wg, base)
-			e.processKeySearch(word, fastSort, wg, base)
+			go e.processKeySearch(word, fastSort, wg, base)
+			//e.processKeySearch(word, fastSort, wg, base)
 		}
 		wg.Wait()
 	})
@@ -493,8 +493,8 @@ func (e *Engine) MultiSearch(request *model.SearchRequest) *model.SearchResult {
 			wg := new(sync.WaitGroup)
 			wg.Add(count)
 			for index, item := range resultItems {
-				//go e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
-				e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
+				go e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
+				//e.getDocument(item, &result.Documents[index], request, &wordMap, wg)
 			}
 			wg.Wait()
 		}
